@@ -52,8 +52,8 @@ High-contrast colors and clear visual feedback for better usability.
 
 
 Contributing:
-
 Contributions are welcome! Please follow these steps:
+
 Fork the repository.
 
 Create a new branch (git checkout -b feature/your-feature).
