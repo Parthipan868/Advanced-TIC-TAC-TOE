@@ -46,7 +46,7 @@ Focus management for modals and buttons.
 High-contrast colors and clear visual feedback for better usability.
 
 
-
+![Image](https://github.com/user-attachments/assets/def08391-a2da-48d4-ae44-f475a11aa27b)
 
 
 Fork the repository.
