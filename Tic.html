@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Advanced Animated Tic-Tac-Toe with Rules</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Animated background elements */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
+    animation: backgroundPulse 8s ease-in-out infinite;
+    z-index: -2;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+      linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.03) 50%, transparent 60%),
+      linear-gradient(-45deg, transparent 40%, rgba(255,255,255,0.03) 50%, transparent 60%);
+    animation: backgroundRotate 20s linear infinite;
+    z-index: -1;
+  }
+
+  @keyframes backgroundPulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes backgroundRotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  h1 {
+    font-size: 55px;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+
+  #rulesBtn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #764ba2;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(118,75,162,0.6);
+    transition: background 0.3s ease, transform 0.2s ease;
+    z-index: 1100;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  #rulesBtn:hover,
+  #rulesBtn:focus {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    outline: none;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 
+      0 6px 20px rgba(118,75,162,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+
+  .game-container {
+    background: rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    max-width: 400px;
+    width: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+    .game-container:hover {
+    transform: translateY(-2px);
+  }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 1rem 0;
+  }
+
+  .cell {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+   .cell:hover:not(.disabled) {
+    background: rgba(255,255,255,0.25);
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+  }
+  .cell.disabled {
+    cursor: default;
+  }
+
+  .mark {
+    display: inline-block;
+    opacity: 0;
+    transform: scale(0.5) rotate(-90deg);
+    animation: markIn 0.4s forwards;
+  }
+  @keyframes markIn {
+    to {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  .blurred {
+    filter: blur(2px);
+    opacity: 0.5;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+  }
+
+  .info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  .turn-indicator {
+    font-style: italic;
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    animation: turnPulse 2s ease-in-out infinite;
+  }
+
+  .modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+    pointer-events: none;
+  }
+  .modal.active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal-content {
+    background: #2c2c54;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 300px;
+    width: 90%;
+    box-shadow: 0 0 15px #764ba2;
+  }
+  .modal-content h2 {
+    margin-bottom: 1rem;
+  }
+  .modal-content button {
+    background: #764ba2;
+    border: none;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    margin: 0 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+  .modal-content button:hover {
+    background: #667eea;
+  }
+
+
+  @media (max-width: 450px) {
+    .cell {
+      font-size: 2.5rem;
+    }
+  }
+
+
+  #rulesModal .modal-content {
+    max-width: 400px;
+    padding: 2rem 2.5rem;
+    background: #3a2c5a;
+    box-shadow: 0 0 25px #764ba2;
+    border-radius: 15px;
+    color: #eee;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  #rulesModal ul {
+    padding-left: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  #rulesModal ul li {
+    margin-bottom: 0.8rem;
+  }
+
+
+  #closeRulesBtn {
+    background: #764ba2;
+    border: none;
+    color: white;
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  #closeRulesBtn:hover,
+  #closeRulesBtn:focus {
+    background: #667eea;
+    outline: none;
+  }
+
+  .board.disabled {
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+
+<h1>Advanced Tic-Tac-Toe</h1>
+<br>
+
+<button id="rulesBtn" aria-haspopup="dialog" aria-controls="rulesModal" aria-expanded="false" title="View Game Rules">Rules</button>
+
+<div class="game-container">
+  <div class="info">
+    <div>Player X: <span id="scoreX">0</span></div>
+    <div class="turn-indicator" id="turnIndicator">Turn: X</div>
+    <div>Player O: <span id="scoreO">0</span></div>
+  </div>
+
+  <div class="board" id="board">
+
+  </div>
+</div>
+
+
+<div class="modal" id="modal" role="alertdialog" aria-modal="true" aria-labelledby="modalMessage" tabindex="-1">
+  <div class="modal-content">
+    <h2 id="modalMessage"></h2>
+    <button id="continueBtn">Continue</button><br>
+    <br>
+    <button id="restartBtn">Restart</button>
+  </div>
+</div>
+
+
+<div class="modal" id="rulesModal" role="dialog" aria-modal="true" aria-labelledby="rulesTitle" tabindex="-1">
+  <div class="modal-content">
+    <h2 id="rulesTitle">Game Rules</h2>
+    <ul>
+      <li>Players take turns placing their marks (X or O) on the grid.</li>
+      <li>Each player can have only 3 marks on the board at a time.</li>
+      <li>Placing a 4th mark removes the oldest mark of that player with an animation.</li>
+      <li>The first player to align 3 marks horizontally, vertically, or diagonally wins.</li>
+      <li>If all cells are filled without a winner, the game is a draw.</li>
+    </ul>
+    <button id="closeRulesBtn" aria-label="Close Rules">Close</button>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const boardEl = document.getElementById('board');
+    const turnIndicator = document.getElementById('turnIndicator');
+    const scoreXEl = document.getElementById('scoreX');
+    const scoreOEl = document.getElementById('scoreO');
+    const modal = document.getElementById('modal');
+    const modalMessage = document.getElementById('modalMessage');
+    const continueBtn = document.getElementById('continueBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+   
+    const rulesBtn = document.getElementById('rulesBtn');
+    const rulesModal = document.getElementById('rulesModal');
+    const closeRulesBtn = document.getElementById('closeRulesBtn');
+
+    let board = Array(9).fill(null);
+    let currentPlayer = 'X';
+    let scores = { X: 0, O: 0 };
+
+    let marks = { X: [], O: [] };
+
+ 
+    const winningCombos = [
+      [0,1,2],[3,4,5],[6,7,8], 
+      [0,3,6],[1,4,7],[2,5,8], 
+      [0,4,8],[2,4,6]          
+    ];
+
+   
+    function createBoard() {
+      boardEl.innerHTML = '';
+      for(let i=0; i<9; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.index = i;
+        cell.addEventListener('click', onCellClick);
+        boardEl.appendChild(cell);
+      }
+    }
+
+ 
+    function renderBoard() {
+      board.forEach((mark, idx) => {
+        const cell = boardEl.children[idx];
+        cell.innerHTML = '';
+        cell.classList.remove('disabled');
+        if(mark) {
+          const span = document.createElement('span');
+          span.textContent = mark;
+          span.classList.add('mark');
+          const playerMarks = marks[mark];
+          if(playerMarks.length === 3 && playerMarks[0] === idx) {
+            span.classList.add('blurred');
+          }
+          cell.appendChild(span);
+          cell.classList.add('disabled');
+        }
+      });
+    }
+
+
+    function checkWinner() {
+
+      for(const player of ['X', 'O']) {
+        const playerMarks = marks[player];
+        if(playerMarks.length < 3) continue; 
+
+        for(const combo of winningCombos) {
+          if(combo.every(pos => playerMarks.includes(pos))) {
+            return player;
+          }
+        }
+      }
+      return null;
+    }
+
+ 
+    function isDraw() {
+      return board.every(cell => cell !== null);
+    }
+
+  
+    function placeMark(idx) {
+      if(board[idx] !== null) return; 
+
+      board[idx] = currentPlayer;
+      marks[currentPlayer].push(idx);
+
+
+      if(marks[currentPlayer].length > 3) {
+        const oldestIdx = marks[currentPlayer].shift();
+        
+        const cellToRemove = boardEl.children[oldestIdx];
+        const markEl = cellToRemove.querySelector('.mark');
+        if(markEl) {
+          markEl.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          markEl.style.opacity = '0';
+          markEl.style.transform = 'scale(0) rotate(90deg)';
+          setTimeout(() => {
+            board[oldestIdx] = null;
+            renderBoard();
+          }, 500);
+        } else {
+          board[oldestIdx] = null;
+        }
+      }
+      renderBoard();
+    }
+
+   
+    function switchPlayer() {
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      turnIndicator.textContent = `Turn: ${currentPlayer}`;
+    }
+
+   
+    function onCellClick(e) {
+      const idx = +e.currentTarget.dataset.index;
+      if(board[idx] !== null) return;
+      placeMark(idx);
+
+      
+      const winner = checkWinner();
+      if(winner) {
+        scores[winner]++;
+        updateScores();
+        showModal(`${winner} Wins!`);
+        return;
+      }
+
+     
+      if(isDraw()) {
+        showModal('Draw!');
+        return;
+      }
+
+      switchPlayer();
+    }
+
+   
+    function updateScores() {
+      scoreXEl.textContent = scores.X;
+      scoreOEl.textContent = scores.O;
+    }
+
+   
+    function showModal(message) {
+      modalMessage.textContent = message;
+      modal.classList.add('active');
+     
+      boardEl.classList.add('disabled');
+   
+      modal.focus();
+    }
+
+  
+    function hideModal() {
+      modal.classList.remove('active');
+      boardEl.classList.remove('disabled');
+    }
+
+   
+    function continueGame() {
+      board.fill(null);
+      marks = { X: [], O: [] };
+      renderBoard();
+      hideModal();
+      currentPlayer = 'X';
+      turnIndicator.textContent = `Turn: ${currentPlayer}`;
+    }
+
+   
+    function restartGame() {
+      scores = { X: 0, O: 0 };
+      updateScores();
+      continueGame();
+    }
+
+   
+    continueBtn.addEventListener('click', continueGame);
+    restartBtn.addEventListener('click', restartGame);
+
+ 
+    rulesBtn.addEventListener('click', () => {
+      rulesModal.classList.add('active');
+      rulesBtn.setAttribute('aria-expanded', 'true');
+   
+      rulesModal.focus();
+      
+      boardEl.classList.add('disabled');
+    });
+
+
+    function closeRules() {
+      rulesModal.classList.remove('active');
+      rulesBtn.setAttribute('aria-expanded', 'false');
+      rulesBtn.focus();
+      boardEl.classList.remove('disabled');
+    }
+
+    closeRulesBtn.addEventListener('click', closeRules);
+
+
+    rulesModal.addEventListener('click', (e) => {
+      if (e.target === rulesModal) {
+        closeRules();
+      }
+    });
+
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (rulesModal.classList.contains('active')) {
+          closeRules();
+        } else if (modal.classList.contains('active')) {
+          hideModal();
+        }
+      }
+    });
+
+    // Initialize
+    createBoard();
+    renderBoard();
+    updateScores();
+
+  })();
+</script>
+
+</body>
+</html>
