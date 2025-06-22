@@ -50,9 +50,13 @@ High-contrast colors and clear visual feedback for better usability.
 
 
 Fork the repository.
+
 Create a new branch (git checkout -b feature/your-feature).
+
 Make your changes and commit (git commit -m "Add your feature").
+
 Push to the branch (git push origin feature/your-feature).
+
 Open a Pull Request.
 
 Contact
