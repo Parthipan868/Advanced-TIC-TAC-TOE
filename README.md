@@ -1,6 +1,8 @@
 Advanced Tic-Tac-Toe
+
 A modern, animated Tic-Tac-Toe game with a unique twist: each player can only have three marks on the board at a time. Built with HTML, CSS, and JavaScript, this game features a sleek UI, animations, and accessibility support.
-Features
+
+Features:
 
 Unique Gameplay: Players are limited to three marks on the board. Placing a fourth mark removes the oldest one with a smooth animation.
 Responsive Design: Adapts to various screen sizes, including mobile devices.
@@ -10,7 +12,7 @@ Modal System: Displays game outcomes (win/draw) and game rules in accessible mod
 Accessibility: Includes ARIA attributes, keyboard navigation (ESC to close modals), and focus management.
 Rules Modal: A dedicated button to view game rules, with a clean and modern presentation.
 
-How to Play
+How to Play:
 
 Players take turns placing their mark (X or O) on the 3x3 grid.
 Each player can have only three marks on the board at a time.
@@ -20,25 +22,25 @@ If all cells are filled without a winner, the game ends in a draw.
 Use the "Continue" button to reset the board and keep playing, or "Restart" to reset scores and the board.
 Click the "Rules" button (top-right) to view the game rules at any time.
 
-Installation
+Installation:
 
 Clone the repository:git clone https://github.com/your-username/advanced-tic-tac-toe.git
 
 
 Open index.html in a web browser to play the game. No additional setup or dependencies are required.
 
-File Structure
+File Structure:
 
 index.html: The main file containing the HTML structure, CSS styles, and JavaScript logic for the game.
 
-Technologies Used
+Technologies Used:
 
 HTML5: For the game structure.
 CSS3: For styling, animations, and responsive design (uses CSS Grid, Flexbox, and transitions).
 JavaScript: For game logic, event handling, and DOM manipulation.
 No external dependencies: Pure vanilla JavaScript and CSS.
 
-Accessibility Features
+Accessibility Features:
 
 ARIA attributes for modals (role, aria-modal, aria-labelledby, etc.).
 Keyboard support: Press Escape to close modals.
@@ -48,6 +50,10 @@ High-contrast colors and clear visual feedback for better usability.
 
 ![Image](https://github.com/user-attachments/assets/def08391-a2da-48d4-ae44-f475a11aa27b)
 
+
+Contributing:
+
+Contributions are welcome! Please follow these steps:
 
 Fork the repository.
 
@@ -60,4 +66,5 @@ Push to the branch (git push origin feature/your-feature).
 Open a Pull Request.
 
 Contact
+
 For questions or feedback, feel free to open an issue on GitHub or contact 'arunparthi8686@gmail.com'.
