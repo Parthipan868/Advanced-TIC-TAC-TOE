@@ -52,17 +52,18 @@ High-contrast colors and clear visual feedback for better usability.
 
 
 Contributing:
+
 Contributions are welcome! Please follow these steps:
 
-Fork the repository.
+->Fork the repository.
 
-Create a new branch (git checkout -b feature/your-feature).
+->Create a new branch (git checkout -b feature/your-feature).
 
-Make your changes and commit (git commit -m "Add your feature").
+->Make your changes and commit (git commit -m "Add your feature").
 
-Push to the branch (git push origin feature/your-feature).
+->Push to the branch (git push origin feature/your-feature).
 
-Open a Pull Request.
+->Open a Pull Request.
 
-Contact
+Contact:
 For questions or feedback, feel free to open an issue on GitHub or contact 'arunparthi8686@gmail.com'.
