@@ -2,6 +2,8 @@ Advanced Tic-Tac-Toe
 
 A modern, animated Tic-Tac-Toe game with a unique twist: each player can only have three marks on the board at a time. Built with HTML, CSS, and JavaScript, this game features a sleek UI, animations, and accessibility support.
 
+Host Link : https://parthipan868.github.io/Advanced-TIC-TAC-TOE/
+
 Features:
 
 Unique Gameplay: Players are limited to three marks on the board. Placing a fourth mark removes the oldest one with a smooth animation.
